@@ -727,7 +727,7 @@ function playTone(type) {
   oscillator.stop(context.currentTime + 0.22);
 }
 
-function playBackgroundMusicNote(context, frequency, duration = 0.6, volume = 0.06) {
+function playBackgroundMusicNote(context, frequency, duration = 0.6, volume = 0.12) {
   const oscillator = context.createOscillator();
   const gainNode = context.createGain();
   oscillator.type = "triangle";
@@ -762,18 +762,25 @@ function startMusicLoop() {
   if (context.state === "suspended") {
     void context.resume();
   }
-  const melody = [261.63, 329.63, 392.0, 329.63, 392.0, 523.25, 392.0, 329.63];
+  const tracks = [
+    [261.63, 293.66, 329.63, 349.23, 392.0, 349.23, 329.63, 293.66],
+    [392.0, 440.0, 493.88, 523.25, 493.88, 440.0, 392.0, 349.23],
+    [329.63, 392.0, 440.0, 392.0, 349.23, 329.63, 293.66, 261.63],
+  ];
+  const melody = tracks[Math.floor(Math.random() * tracks.length)];
   let index = 0;
   if (musicLoop) {
     window.clearInterval(musicLoop);
   }
-  musicLoop = window.setInterval(() => {
+  const playNext = () => {
     if (!state.musicEnabled) {
       return;
     }
-    playBackgroundMusicNote(context, melody[index % melody.length], 0.55, 0.06);
+    playBackgroundMusicNote(context, melody[index % melody.length], 0.55, 0.14);
     index += 1;
-  }, 650);
+  };
+  playNext();
+  musicLoop = window.setInterval(playNext, 650);
   window.__eduplayMusicLoopActive = true;
 }
 
