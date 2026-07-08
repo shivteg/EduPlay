@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="EduPlay is a playful educational game experience with quizzes, achievements, a shop, and progress tracking."
+    />
+    <title>EduPlay | Learn and Play</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">✦</div>
+        <div>
+          <p class="eyebrow">Curated learning adventure</p>
+          <h1>EduPlay</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <label class="switch" for="themeToggle">
+          <span class="switch-label">Dark mode</span>
+          <input id="themeToggle" type="checkbox" aria-label="Toggle dark mode" />
+          <span class="slider" aria-hidden="true"></span>
+        </label>
+        <button class="button secondary" id="helpButton" type="button">Help</button>
+        <button class="button secondary" id="creditsButton" type="button">Credits</button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Adaptive educational game platform</p>
+          <h2 id="hero-title">Turn every lesson into a rewarding game.</h2>
+          <p>
+            Explore math, science, geography, and logic challenges while earning XP,
+            coins, and achievements in a calm, accessible experience.
+          </p>
+          <div class="hero-actions">
+            <button class="button primary" id="startHeroButton" type="button">Start a New Game</button>
+            <button class="button secondary" id="viewStatsButton" type="button">View Progress</button>
+          </div>
+        </div>
+        <div class="hero-card" aria-label="Player overview">
+          <div class="hero-card-grid">
+            <div>
+              <p class="stat-label">Level</p>
+              <p class="stat-value" id="heroLevel">1</p>
+            </div>
+            <div>
+              <p class="stat-label">Coins</p>
+              <p class="stat-value" id="heroCoins">0</p>
+            </div>
+            <div>
+              <p class="stat-label">XP</p>
+              <p class="stat-value" id="heroXP">0</p>
+            </div>
+            <div>
+              <p class="stat-label">Best</p>
+              <p class="stat-value" id="heroBest">0</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="game-shell" aria-labelledby="game-title">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Live session</p>
+            <h2 id="game-title">Challenge board</h2>
+          </div>
+          <div class="status-pill" id="statusText" aria-live="polite">Ready.</div>
+        </div>
+
+        <div class="hud" aria-label="Game status">
+          <div class="hud-card">
+            <span class="hud-label">Score</span>
+            <strong id="scoreValue">0</strong>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">Timer</span>
+            <strong id="timerValue">12</strong>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">Lives</span>
+            <strong id="livesValue">3</strong>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">Round</span>
+            <strong id="roundValue">0/10</strong>
+          </div>
+        </div>
+
+        <div class="game-grid">
+          <article class="panel large">
+            <div class="question-meta" id="questionMeta"></div>
+            <h3 id="questionText">Pick a topic to start learning.</h3>
+            <div class="options" id="options" role="list"></div>
+            <div class="feedback" id="feedback" aria-live="polite"></div>
+            <div class="game-actions">
+              <button class="button primary" id="startGameButton" type="button">Start new round</button>
+              <button class="button secondary" id="hintButton" type="button">Use hint</button>
+            </div>
+          </article>
+
+          <aside class="panel side-panel">
+            <h3>Choose a theme</h3>
+            <div class="chip-group" id="modeButtons" role="group" aria-label="Game themes"></div>
+            <h3>Inventory</h3>
+            <ul class="inventory-list" id="inventoryList"></ul>
+            <h3>Achievement streak</h3>
+            <ul class="inventory-list" id="achievementList"></ul>
+          </aside>
+        </div>
+      </section>
+
+      <section class="info-grid" aria-label="Progress and rewards">
+        <article class="panel">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Rewards</p>
+              <h3>Shop</h3>
+            </div>
+          </div>
+          <div id="shopList" class="shop-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Learning snapshot</p>
+              <h3>Statistics</h3>
+            </div>
+          </div>
+          <div id="statsList" class="stats-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Top learners</p>
+              <h3>Leaderboard</h3>
+            </div>
+          </div>
+          <ol id="leaderboardList" class="leaderboard-list"></ol>
+        </article>
+      </section>
+
+      <section class="settings-grid" aria-label="Settings and support">
+        <article class="panel">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Personalize</p>
+              <h3>Settings</h3>
+            </div>
+          </div>
+          <form id="settingsForm" class="settings-form">
+            <label>
+              Name
+              <input id="playerName" name="playerName" type="text" maxlength="20" />
+            </label>
+            <label>
+              Difficulty
+              <select id="difficultySelect" name="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </label>
+            <label class="checkbox-row">
+              <input id="soundToggle" name="sound" type="checkbox" checked />
+              <span>Enable sound effects</span>
+            </label>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Support</p>
+              <h3>About EduPlay</h3>
+            </div>
+          </div>
+          <p>
+            EduPlay blends quick-thinking learning with rewarding feedback loops. It is designed
+            for clarity, accessibility, and joyful repetition.
+          </p>
+          <div class="support-links">
+            <button class="button secondary" id="openHelpDialog" type="button">How it works</button>
+            <button class="button secondary" id="openCreditsDialog" type="button">Meet the team</button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <dialog id="helpDialog">
+      <form method="dialog" class="dialog-content">
+        <h3>How EduPlay works</h3>
+        <ul>
+          <li>Choose a theme and start a round.</li>
+          <li>Answer quickly to collect score, XP, and coins.</li>
+          <li>Spend coins in the shop for helpful boosts.</li>
+          <li>Keep an eye on your lives and timer so you can climb the leaderboard.</li>
+        </ul>
+        <button class="button primary" type="submit">Close</button>
+      </form>
+    </dialog>
+
+    <dialog id="creditsDialog">
+      <form method="dialog" class="dialog-content">
+        <h3>Credits</h3>
+        <p>Designed and built as a polished educational game experience with semantic HTML, CSS, and vanilla JavaScript.</p>
+        <button class="button primary" type="submit">Close</button>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
