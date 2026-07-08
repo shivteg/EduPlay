@@ -688,6 +688,10 @@ function spawnReward(text) {
 
 function ensureAudioContext() {
   if (audioContext) {
+    if (audioContext.state === "suspended") {
+      void audioContext.resume();
+    }
+    window.__eduplayAudioState = { state: audioContext.state };
     return audioContext;
   }
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -698,6 +702,10 @@ function ensureAudioContext() {
   masterGain = audioContext.createGain();
   masterGain.gain.value = 0.04;
   masterGain.connect(audioContext.destination);
+  if (audioContext.state === "suspended") {
+    void audioContext.resume();
+  }
+  window.__eduplayAudioState = { state: audioContext.state };
   return audioContext;
 }
 
@@ -711,12 +719,26 @@ function playTone(type) {
   oscillator.type = type === "success" ? "triangle" : "sawtooth";
   oscillator.frequency.value = type === "success" ? 660 : 220;
   gainNode.gain.setValueAtTime(0.0001, context.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.08, context.currentTime + 0.01);
+  gainNode.gain.exponentialRampToValueAtTime(0.09, context.currentTime + 0.01);
   gainNode.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.2);
   oscillator.connect(gainNode);
   gainNode.connect(masterGain);
   oscillator.start();
   oscillator.stop(context.currentTime + 0.22);
+}
+
+function playBackgroundMusicNote(context, frequency, duration = 0.6, volume = 0.06) {
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  oscillator.type = "triangle";
+  oscillator.frequency.setValueAtTime(frequency, context.currentTime);
+  gainNode.gain.setValueAtTime(0.0001, context.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(volume, context.currentTime + 0.02);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
+  oscillator.connect(gainNode);
+  gainNode.connect(masterGain);
+  oscillator.start();
+  oscillator.stop(context.currentTime + duration + 0.01);
 }
 
 function playSound(type) {
@@ -732,6 +754,29 @@ function playSound(type) {
   }
 }
 
+function startMusicLoop() {
+  const context = ensureAudioContext();
+  if (!context || !state.musicEnabled) {
+    return;
+  }
+  if (context.state === "suspended") {
+    void context.resume();
+  }
+  const melody = [261.63, 329.63, 392.0, 329.63, 392.0, 523.25, 392.0, 329.63];
+  let index = 0;
+  if (musicLoop) {
+    window.clearInterval(musicLoop);
+  }
+  musicLoop = window.setInterval(() => {
+    if (!state.musicEnabled) {
+      return;
+    }
+    playBackgroundMusicNote(context, melody[index % melody.length], 0.55, 0.06);
+    index += 1;
+  }, 650);
+  window.__eduplayMusicLoopActive = true;
+}
+
 function toggleMusic() {
   state.musicEnabled = !state.musicEnabled;
   saveState();
@@ -742,34 +787,11 @@ function toggleMusic() {
       window.clearInterval(musicLoop);
       musicLoop = null;
     }
+    window.__eduplayMusicLoopActive = false;
     return;
   }
-  if (musicLoop) {
-    return;
-  }
-  const context = ensureAudioContext();
-  if (!context) {
-    return;
-  }
-  const notes = [261.63, 329.63, 392, 329.63];
-  let index = 0;
-  musicLoop = window.setInterval(() => {
-    if (!state.musicEnabled) {
-      return;
-    }
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
-    oscillator.type = "sine";
-    oscillator.frequency.value = notes[index % notes.length];
-    gainNode.gain.setValueAtTime(0.0001, context.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.03, context.currentTime + 0.02);
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.7);
-    oscillator.connect(gainNode);
-    gainNode.connect(masterGain);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.72);
-    index += 1;
-  }, 700);
+  setStatus("Background music is now playing.", "default");
+  startMusicLoop();
 }
 
 function handleShopPurchase(event) {
@@ -880,9 +902,6 @@ function initialize() {
   renderProgressPanel();
   bindEvents();
   setStatus("The adventure is ready. Choose a world and begin.", "default");
-  if (state.musicEnabled) {
-    toggleMusic();
-  }
 }
 
 initialize();
