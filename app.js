@@ -172,7 +172,7 @@ function createDefaultState() {
     difficulty: "easy",
     soundEnabled: true,
     musicEnabled: true,
-    theme: "dark",
+    theme: "light",
     coins: 0,
     xp: 0,
     level: 1,
@@ -644,6 +644,8 @@ function endGame() {
 
 function showUnlockCard(worldName) {
   els.unlockOverlay.hidden = false;
+  els.unlockOverlay.classList.add("is-visible");
+  els.unlockOverlay.style.pointerEvents = "auto";
   els.unlockOverlay.innerHTML = `
     <div class="unlock-card">
       <p class="eyebrow">New world unlocked</p>
@@ -652,6 +654,8 @@ function showUnlockCard(worldName) {
     </div>
   `;
   window.setTimeout(() => {
+    els.unlockOverlay.classList.remove("is-visible");
+    els.unlockOverlay.style.pointerEvents = "none";
     els.unlockOverlay.hidden = true;
     els.unlockOverlay.innerHTML = "";
   }, 1400);
