@@ -192,6 +192,26 @@ function createDefaultState() {
   };
 }
 
+function normalizeState(parsed = {}) {
+  const base = createDefaultState();
+  const normalized = {
+    ...base,
+    ...parsed,
+    stats: { ...base.stats, ...(parsed.stats || {}) },
+    worldProgress: { ...base.worldProgress, ...(parsed.worldProgress || {}) },
+  };
+
+  normalized.currentWorldIndex = Math.max(0, Math.min(WORLDS.length - 1, Number(parsed.currentWorldIndex) || 0));
+  normalized.currentLevelIndex = Math.max(0, Math.min(9, Number(parsed.currentLevelIndex) || 0));
+  normalized.currentMode = MODE_DEFINITIONS.some((mode) => mode.id === parsed.currentMode) ? parsed.currentMode : "math";
+  normalized.unlockedWorlds = Array.from({ length: WORLDS.length }, (_, index) => {
+    const savedValue = Array.isArray(parsed.unlockedWorlds) ? parsed.unlockedWorlds[index] : undefined;
+    return index === 0 ? true : Boolean(savedValue);
+  });
+
+  return normalized;
+}
+
 function loadState() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -199,14 +219,7 @@ function loadState() {
       return createDefaultState();
     }
     const parsed = JSON.parse(saved);
-    const base = createDefaultState();
-    return {
-      ...base,
-      ...parsed,
-      stats: { ...base.stats, ...(parsed.stats || {}) },
-      worldProgress: { ...base.worldProgress, ...(parsed.worldProgress || {}) },
-      unlockedWorlds: parsed.unlockedWorlds || base.unlockedWorlds,
-    };
+    return normalizeState(parsed);
   } catch (error) {
     console.error("Unable to load saved game state.", error);
     return createDefaultState();
@@ -214,13 +227,17 @@ function loadState() {
 }
 
 function saveState() {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      ...state,
-      theme: document.documentElement.getAttribute("data-theme"),
-    })
-  );
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...normalizeState(state),
+        theme: document.documentElement.getAttribute("data-theme"),
+      })
+    );
+  } catch (error) {
+    console.warn("Unable to save game state.", error);
+  }
 }
 
 function applyTheme(theme) {
