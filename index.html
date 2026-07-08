@@ -5,23 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="EduPlay is a playful educational game experience with quizzes, achievements, a shop, and progress tracking."
+      content="EduPlay is a premium educational gaming platform with magical worlds, animated rewards, and playful learning adventures."
     />
-    <title>EduPlay | Learn and Play</title>
+    <title>EduPlay | Premium Learning Adventure</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="background-cloud cloud-one" aria-hidden="true"></div>
+    <div class="background-cloud cloud-two" aria-hidden="true"></div>
+    <div class="background-orb orb-one" aria-hidden="true"></div>
+    <div class="background-orb orb-two" aria-hidden="true"></div>
+    <div class="starfield" aria-hidden="true"></div>
+
+    <div id="loadingScreen" class="loading-screen" role="status" aria-live="polite">
+      <div class="loading-card">
+        <div class="loading-icon">✨</div>
+        <h2>Launching EduPlay</h2>
+        <p>Preparing your bright new adventure...</p>
+      </div>
+    </div>
+
+    <div id="unlockOverlay" class="unlock-overlay" hidden></div>
+    <div id="celebrationLayer" class="celebration-layer" aria-hidden="true"></div>
+
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <header class="site-header">
       <div class="brand-block">
         <div class="brand-mark" aria-hidden="true">✦</div>
         <div>
-          <p class="eyebrow">Curated learning adventure</p>
+          <p class="eyebrow">Premium kids learning adventure</p>
           <h1>EduPlay</h1>
         </div>
       </div>
       <div class="header-actions">
+        <button class="button secondary icon-button" id="musicToggle" type="button" aria-pressed="true">♫ Music</button>
         <label class="switch" for="themeToggle">
           <span class="switch-label">Dark mode</span>
           <input id="themeToggle" type="checkbox" aria-label="Toggle dark mode" />
@@ -33,93 +51,173 @@
     </header>
 
     <main id="main-content">
-      <section class="hero" aria-labelledby="hero-title">
+      <section class="hero section-card" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">Adaptive educational game platform</p>
-          <h2 id="hero-title">Turn every lesson into a rewarding game.</h2>
+          <p class="eyebrow">Animated educational game platform</p>
+          <h2 id="hero-title">Play, learn, and level up every day.</h2>
           <p>
-            Explore math, science, geography, and logic challenges while earning XP,
-            coins, and achievements in a calm, accessible experience.
+            Explore magical worlds packed with quizzes, rewards, and encouraging challenges
+            designed to make every lesson feel like a fun adventure.
           </p>
           <div class="hero-actions">
-            <button class="button primary" id="startHeroButton" type="button">Start a New Game</button>
-            <button class="button secondary" id="viewStatsButton" type="button">View Progress</button>
+            <button class="button primary" id="startHeroButton" type="button">Start your journey</button>
+            <button class="button secondary" id="viewStatsButton" type="button">See progress</button>
+          </div>
+          <div class="hero-badges" aria-label="Highlights">
+            <span class="badge-pill">✨ 4 magical worlds</span>
+            <span class="badge-pill">🪙 Coins and boosts</span>
+            <span class="badge-pill">🏆 Daily streaks</span>
           </div>
         </div>
-        <div class="hero-card" aria-label="Player overview">
-          <div class="hero-card-grid">
-            <div>
-              <p class="stat-label">Level</p>
-              <p class="stat-value" id="heroLevel">1</p>
+        <div class="hero-visual" aria-label="Player overview">
+          <div class="hero-card">
+            <div class="hero-card-top">
+              <div>
+                <p class="stat-label">Player</p>
+                <p class="stat-value" id="playerNameDisplay">Learner</p>
+              </div>
+              <div class="player-avatar" aria-hidden="true">🧒</div>
             </div>
-            <div>
-              <p class="stat-label">Coins</p>
-              <p class="stat-value" id="heroCoins">0</p>
+            <div class="hero-card-grid">
+              <div>
+                <p class="stat-label">Level</p>
+                <p class="stat-value" id="heroLevel">1</p>
+              </div>
+              <div>
+                <p class="stat-label">Coins</p>
+                <p class="stat-value" id="heroCoins">0</p>
+              </div>
+              <div>
+                <p class="stat-label">XP</p>
+                <p class="stat-value" id="heroXP">0</p>
+              </div>
+              <div>
+                <p class="stat-label">Best</p>
+                <p class="stat-value" id="heroBest">0</p>
+              </div>
             </div>
-            <div>
-              <p class="stat-label">XP</p>
-              <p class="stat-value" id="heroXP">0</p>
-            </div>
-            <div>
-              <p class="stat-label">Best</p>
-              <p class="stat-value" id="heroBest">0</p>
+            <div class="hero-tray">
+              <span class="reward-pill">⚡ Streak <strong id="streakValue">0</strong></span>
+              <span class="reward-pill">🎁 Badge <strong id="dailyBadge">New</strong></span>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="game-shell" aria-labelledby="game-title">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Live session</p>
-            <h2 id="game-title">Challenge board</h2>
+      <section class="dashboard-shell" aria-label="Adventure overview">
+        <article class="panel dashboard-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Adventure map</p>
+              <h2>Player progress</h2>
+            </div>
+            <div class="status-pill" id="statusText" aria-live="polite">Ready to play.</div>
           </div>
-          <div class="status-pill" id="statusText" aria-live="polite">Ready.</div>
-        </div>
+          <div class="progress-row">
+            <span>Overall game progress</span>
+            <strong id="overallProgressText">0%</strong>
+          </div>
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="overallProgressBar"></div>
+          </div>
+          <div class="trait-grid">
+            <div class="trait-card">
+              <span class="trait-label">Correct answers</span>
+              <strong id="correctValue">0</strong>
+            </div>
+            <div class="trait-card">
+              <span class="trait-label">World completion</span>
+              <strong id="worldProgressText">0%</strong>
+            </div>
+            <div class="trait-card">
+              <span class="trait-label">Lives left</span>
+              <strong id="livesValue">3</strong>
+            </div>
+          </div>
+        </article>
 
-        <div class="hud" aria-label="Game status">
-          <div class="hud-card">
-            <span class="hud-label">Score</span>
-            <strong id="scoreValue">0</strong>
+        <aside class="panel world-panel">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Unlockable worlds</p>
+              <h3>World map</h3>
+            </div>
           </div>
-          <div class="hud-card">
-            <span class="hud-label">Timer</span>
-            <strong id="timerValue">12</strong>
+          <div id="worldList" class="world-list"></div>
+        </aside>
+      </section>
+
+      <section class="game-shell section-card" aria-labelledby="game-title">
+        <div class="panel header-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Current mission</p>
+              <h2 id="game-title">Challenge board</h2>
+            </div>
+            <div class="status-pill" id="missionStatus">World 1 · Stellar Sprint</div>
           </div>
-          <div class="hud-card">
-            <span class="hud-label">Lives</span>
-            <strong id="livesValue">3</strong>
+          <div class="mission-meta">
+            <div class="meta-pill" id="worldBadge">World 1 · Stellar Sprint</div>
+            <div class="meta-pill" id="levelBadge">Level 1</div>
+            <div class="meta-pill">Boss level <span id="bossBadge">No</span></div>
           </div>
-          <div class="hud-card">
-            <span class="hud-label">Round</span>
-            <strong id="roundValue">0/10</strong>
+
+          <div class="hud" aria-label="Game status">
+            <div class="hud-card">
+              <span class="hud-label">Score</span>
+              <strong id="scoreValue">0</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Timer</span>
+              <strong id="timerValue">12</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Lives</span>
+              <strong id="livesValueInline">3</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Level</span>
+              <strong id="roundValue">1/10</strong>
+            </div>
+          </div>
+
+          <div class="world-progress-panel">
+            <div class="progress-row compact">
+              <span>World completion</span>
+              <strong id="worldProgressTextInline">0%</strong>
+            </div>
+            <div class="progress-bar" aria-hidden="true">
+              <div class="progress-fill" id="worldProgressBar"></div>
+            </div>
           </div>
         </div>
 
         <div class="game-grid">
           <article class="panel large">
             <div class="question-meta" id="questionMeta"></div>
-            <h3 id="questionText">Pick a topic to start learning.</h3>
+            <h3 id="questionText">Choose a world to begin your quest.</h3>
             <div class="options" id="options" role="list"></div>
             <div class="feedback" id="feedback" aria-live="polite"></div>
             <div class="game-actions">
-              <button class="button primary" id="startGameButton" type="button">Start new round</button>
-              <button class="button secondary" id="hintButton" type="button">Use hint</button>
+              <button class="button primary" id="startGameButton" type="button">Start quest</button>
+              <button class="button secondary" id="hintButton" type="button">Reveal hint</button>
             </div>
           </article>
 
           <aside class="panel side-panel">
-            <h3>Choose a theme</h3>
+            <h3>Study paths</h3>
             <div class="chip-group" id="modeButtons" role="group" aria-label="Game themes"></div>
+            <h3>Daily quests</h3>
+            <ul class="inventory-list quest-list" id="questList"></ul>
             <h3>Inventory</h3>
             <ul class="inventory-list" id="inventoryList"></ul>
-            <h3>Achievement streak</h3>
+            <h3>Achievements</h3>
             <ul class="inventory-list" id="achievementList"></ul>
           </aside>
         </div>
       </section>
 
-      <section class="info-grid" aria-label="Progress and rewards">
+      <section class="info-grid" aria-label="Rewards and progress">
         <article class="panel">
           <div class="panel-header compact">
             <div>
@@ -187,8 +285,8 @@
             </div>
           </div>
           <p>
-            EduPlay blends quick-thinking learning with rewarding feedback loops. It is designed
-            for clarity, accessibility, and joyful repetition.
+            EduPlay turns educational practice into an exciting, repeatable adventure with
+            colorful worlds, gentle progression, and rewarding feedback.
           </p>
           <div class="support-links">
             <button class="button secondary" id="openHelpDialog" type="button">How it works</button>
@@ -202,10 +300,10 @@
       <form method="dialog" class="dialog-content">
         <h3>How EduPlay works</h3>
         <ul>
-          <li>Choose a theme and start a round.</li>
-          <li>Answer quickly to collect score, XP, and coins.</li>
-          <li>Spend coins in the shop for helpful boosts.</li>
-          <li>Keep an eye on your lives and timer so you can climb the leaderboard.</li>
+          <li>Pick a world and learn through progressively harder levels.</li>
+          <li>Answer quickly to earn XP, coins, and streaks.</li>
+          <li>Spend coins in the shop and unlock the next world after completing 10 levels.</li>
+          <li>Use the music and sound controls to tailor your learning mood.</li>
         </ul>
         <button class="button primary" type="submit">Close</button>
       </form>
@@ -214,7 +312,7 @@
     <dialog id="creditsDialog">
       <form method="dialog" class="dialog-content">
         <h3>Credits</h3>
-        <p>Designed and built as a polished educational game experience with semantic HTML, CSS, and vanilla JavaScript.</p>
+        <p>Designed and built as a premium educational game experience with semantic HTML, CSS, and vanilla JavaScript.</p>
         <button class="button primary" type="submit">Close</button>
       </form>
     </dialog>
