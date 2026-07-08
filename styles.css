@@ -137,37 +137,6 @@ select:focus-visible {
   opacity: 0.2;
 }
 
-.loading-screen {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(5, 9, 20, 0.82);
-  z-index: 2000;
-  transition: opacity 280ms ease;
-}
-
-.loading-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loading-card {
-  padding: 2rem;
-  border-radius: 28px;
-  border: 1px solid var(--border);
-  background: rgba(17, 29, 49, 0.92);
-  box-shadow: var(--shadow);
-  text-align: center;
-  min-width: min(90vw, 22rem);
-}
-
-.loading-icon {
-  font-size: 2.2rem;
-  margin-bottom: 0.6rem;
-  animation: bob 1.2s ease-in-out infinite;
-}
-
 .site-header {
   display: flex;
   justify-content: space-between;

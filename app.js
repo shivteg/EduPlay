@@ -111,7 +111,6 @@ let musicLoop = null;
 let lastAnswerWasCorrect = false;
 
 const els = {
-  loadingScreen: document.getElementById("loadingScreen"),
   themeToggle: document.getElementById("themeToggle"),
   statusText: document.getElementById("statusText"),
   scoreValue: document.getElementById("scoreValue"),
@@ -857,12 +856,6 @@ function initialize() {
   renderProgressPanel();
   bindEvents();
   setStatus("The adventure is ready. Choose a world and begin.", "default");
-  window.setTimeout(() => {
-    els.loadingScreen.classList.add("hidden");
-    window.setTimeout(() => {
-      els.loadingScreen.remove();
-    }, 280);
-  }, 750);
   if (state.musicEnabled) {
     toggleMusic();
   }
