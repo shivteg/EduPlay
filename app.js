@@ -137,6 +137,7 @@ const els = {
   difficultySelect: document.getElementById("difficultySelect"),
   soundToggle: document.getElementById("soundToggle"),
   musicToggle: document.getElementById("musicToggle"),
+  settingsForm: document.getElementById("settingsForm"),
   helpDialog: document.getElementById("helpDialog"),
   creditsDialog: document.getElementById("creditsDialog"),
   helpButton: document.getElementById("helpButton"),
@@ -850,7 +851,9 @@ function bindEvents() {
   els.openHelpDialog.addEventListener("click", () => els.helpDialog.showModal());
   els.openCreditsDialog.addEventListener("click", () => els.creditsDialog.showModal());
   els.shopList.addEventListener("click", handleShopPurchase);
-  els.settingsForm.addEventListener("input", updateSettings);
+  if (els.settingsForm) {
+    els.settingsForm.addEventListener("input", updateSettings);
+  }
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {

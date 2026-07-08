@@ -41,7 +41,7 @@ html {
 body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, var(--bg), #142340 40%, #081225);
+  background: linear-gradient(135deg, #02050d 0%, #0d1730 38%, #060b16 100%);
   color: var(--text);
   min-height: 100vh;
   line-height: 1.55;
@@ -53,7 +53,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(94, 227, 200, 0.22), transparent 28%);
+  background: radial-gradient(circle at top left, rgba(94, 227, 200, 0.16), transparent 30%);
   pointer-events: none;
   z-index: -1;
 }
