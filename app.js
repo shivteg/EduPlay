@@ -108,6 +108,7 @@ let countdownHandle = null;
 let audioContext = null;
 let masterGain = null;
 let musicLoop = null;
+let musicGainNode = null;
 let lastAnswerWasCorrect = false;
 
 const els = {
@@ -727,10 +728,10 @@ function playTone(type) {
   oscillator.stop(context.currentTime + 0.22);
 }
 
-function playBackgroundMusicNote(context, frequency, duration = 0.6, volume = 0.12) {
+function playBackgroundMusicNote(context, frequency, duration = 0.6, volume = 0.06) {
   const oscillator = context.createOscillator();
   const gainNode = context.createGain();
-  oscillator.type = "triangle";
+  oscillator.type = "sine";
   oscillator.frequency.setValueAtTime(frequency, context.currentTime);
   gainNode.gain.setValueAtTime(0.0001, context.currentTime);
   gainNode.gain.exponentialRampToValueAtTime(volume, context.currentTime + 0.02);
@@ -762,25 +763,36 @@ function startMusicLoop() {
   if (context.state === "suspended") {
     void context.resume();
   }
-  const tracks = [
-    [261.63, 293.66, 329.63, 349.23, 392.0, 349.23, 329.63, 293.66],
-    [392.0, 440.0, 493.88, 523.25, 493.88, 440.0, 392.0, 349.23],
-    [329.63, 392.0, 440.0, 392.0, 349.23, 329.63, 293.66, 261.63],
-  ];
-  const melody = tracks[Math.floor(Math.random() * tracks.length)];
-  let index = 0;
   if (musicLoop) {
     window.clearInterval(musicLoop);
+    musicLoop = null;
   }
+  if (!musicGainNode) {
+    musicGainNode = context.createGain();
+    musicGainNode.gain.value = 0.035;
+    musicGainNode.connect(masterGain);
+  }
+  const melody = [261.63, 329.63, 392.0, 523.25, 392.0, 329.63, 261.63, 196.0];
+  let index = 0;
   const playNext = () => {
     if (!state.musicEnabled) {
       return;
     }
-    playBackgroundMusicNote(context, melody[index % melody.length], 0.55, 0.14);
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(melody[index % melody.length], context.currentTime);
+    gainNode.gain.setValueAtTime(0.0001, context.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.06, context.currentTime + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.75);
+    oscillator.connect(gainNode);
+    gainNode.connect(musicGainNode);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.76);
     index += 1;
   };
   playNext();
-  musicLoop = window.setInterval(playNext, 650);
+  musicLoop = window.setInterval(playNext, 750);
   window.__eduplayMusicLoopActive = true;
 }
 
@@ -797,7 +809,6 @@ function toggleMusic() {
     window.__eduplayMusicLoopActive = false;
     return;
   }
-  setStatus("Background music is now playing.", "default");
   startMusicLoop();
 }
 
