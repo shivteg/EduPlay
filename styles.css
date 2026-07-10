@@ -1,33 +1,33 @@
 :root {
   color-scheme: dark;
-  --bg: #070b18;
-  --surface: rgba(13, 22, 40, 0.86);
-  --surface-strong: rgba(23, 34, 61, 0.95);
-  --text: #f6f9ff;
-  --muted: #9bb0cb;
-  --accent: #5ee3c8;
-  --accent-2: #7c7fff;
-  --accent-3: #ff8fb1;
-  --danger: #ff6b7f;
-  --warning: #ffc96b;
+  --bg: #1a0b2e;
+  --surface: rgba(36, 17, 61, 0.86);
+  --surface-strong: rgba(56, 23, 89, 0.95);
+  --text: #ffffff;
+  --muted: #bda4d6;
+  --accent: #00e5ff;
+  --accent-2: #ff4785;
+  --accent-3: #ffc82c;
+  --danger: #ff3366;
+  --warning: #ffb400;
   --border: rgba(255, 255, 255, 0.14);
-  --shadow: 0 24px 60px rgba(3, 8, 24, 0.32);
+  --shadow: 0 24px 60px rgba(26, 11, 46, 0.5);
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f4f7ff;
-  --surface: rgba(255, 255, 255, 0.9);
+  --bg: #e0f2fe;
+  --surface: rgba(255, 255, 255, 0.95);
   --surface-strong: #ffffff;
-  --text: #11203d;
-  --muted: #647494;
-  --accent: #0f8c78;
-  --accent-2: #4d63e8;
-  --accent-3: #da4d89;
-  --danger: #d93b53;
-  --warning: #b96f00;
-  --border: rgba(17, 32, 61, 0.14);
-  --shadow: 0 20px 55px rgba(33, 49, 87, 0.14);
+  --text: #1e293b;
+  --muted: #64748b;
+  --accent: #0ea5e9;
+  --accent-2: #f43f5e;
+  --accent-3: #f59e0b;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --border: rgba(15, 23, 42, 0.1);
+  --shadow: 0 20px 55px rgba(14, 165, 233, 0.15);
 }
 
 * {
@@ -40,8 +40,8 @@ html {
 
 body {
   margin: 0;
-  font-family: "Trebuchet MS", "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #02050d 0%, #0d1730 38%, #060b16 100%);
+  font-family: "Nunito", "Comic Sans MS", "Chalkboard SE", "Marker Felt", sans-serif;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--surface-strong) 100%);
   color: var(--text);
   min-height: 100vh;
   line-height: 1.55;
@@ -224,6 +224,7 @@ p {
   transform: translateY(-4px) scale(1.05);
   box-shadow: 0 20px 40px rgba(6, 12, 25, 0.35);
   filter: brightness(1.1);
+  animation: jelly 0.5s ease;
 }
 
 .button.primary {
@@ -451,6 +452,7 @@ main {
   transform: translateY(-6px) scale(1.03);
   border-color: var(--accent);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  animation: bounceHover 1s ease-in-out infinite;
 }
 
 .world-card.active {
@@ -512,6 +514,7 @@ main {
   border-color: var(--accent);
   box-shadow: 0 10px 20px rgba(94, 227, 200, 0.15);
   background: rgba(255,255,255,0.1);
+  animation: wiggle 0.4s ease-in-out;
 }
 
 .option-btn.correct {
@@ -708,6 +711,27 @@ dialog::backdrop {
 @keyframes fall {
   from { transform: translateY(0) rotate(0deg); opacity: 1; }
   to { transform: translateY(100vh) rotate(420deg); opacity: 0; }
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes jelly {
+  0%, 100% { transform: scale(1, 1); }
+  25% { transform: scale(1.05, 0.95); }
+  50% { transform: scale(0.95, 1.05); }
+  75% { transform: scale(1.02, 0.98); }
+}
+
+@keyframes bounceHover {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
