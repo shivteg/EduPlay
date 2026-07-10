@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | EduPlay</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .auth-panel {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .auth-panel h2 {
+      margin-bottom: 1.5rem;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      text-align: left;
+    }
+    .auth-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .auth-links {
+      margin-top: 1.5rem;
+    }
+    .auth-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-cloud cloud-two" aria-hidden="true"></div>
+  <div class="background-orb orb-two" aria-hidden="true"></div>
+  <div class="starfield" aria-hidden="true"></div>
+
+  <div class="auth-container">
+    <div class="panel auth-panel">
+      <h2>Join the Adventure!</h2>
+      <form class="auth-form" action="index.html">
+        <label>
+          Player Name
+          <input type="text" required placeholder="Choose a cool name" />
+        </label>
+        <label>
+          Email
+          <input type="email" required placeholder="Enter your parent's email" />
+        </label>
+        <label>
+          Password
+          <input type="password" required placeholder="Create a password" />
+        </label>
+        <button type="submit" class="button primary">Sign Up</button>
+      </form>
+      <div class="auth-links">
+        <p>Already have an account? <a href="login.html">Sign In</a></p>
+        <p><a href="index.html">Return to Game</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
