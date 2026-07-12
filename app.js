@@ -262,12 +262,12 @@ let selectedAvatar = "🧒";
 function checkOnboarding() {
   if (!state.setupCompleted) {
     if (els.setupOverlay) {
-      els.setupOverlay.hidden = false;
+      els.setupOverlay.style.display = "grid";
     }
     setupCreatorEvents();
   } else {
     if (els.setupOverlay) {
-      els.setupOverlay.hidden = true;
+      els.setupOverlay.style.display = "none";
     }
     applyTheme(state.theme);
   }
@@ -299,7 +299,7 @@ function setupCreatorEvents() {
       state.setupCompleted = true;
       saveState();
       
-      els.setupOverlay.hidden = true;
+      els.setupOverlay.style.display = "none";
       initializeSettings();
       renderProgressPanel();
     });
