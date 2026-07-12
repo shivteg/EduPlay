@@ -168,7 +168,6 @@ const els = {
   setupOverlay: document.getElementById("setupOverlay"),
   setupPlayerName: document.getElementById("setupPlayerName"),
   setupAvatarGrid: document.getElementById("setupAvatarGrid"),
-  setupColorGrid: document.getElementById("setupColorGrid"),
   setupSaveBtn: document.getElementById("setupSaveBtn"),
   heroAvatarDisplay: document.getElementById("heroAvatarDisplay"),
 };
@@ -178,7 +177,6 @@ function createDefaultState() {
     setupCompleted: false,
     playerName: "Learner",
     playerAvatar: "🧒",
-    playerColor: "#00e5ff",
     difficulty: "easy",
     soundEnabled: true,
     musicEnabled: true,
@@ -214,7 +212,6 @@ function normalizeState(parsed = {}) {
 
   normalized.setupCompleted = parsed.hasOwnProperty('setupCompleted') ? Boolean(parsed.setupCompleted) : base.setupCompleted;
   normalized.playerAvatar = parsed.playerAvatar || base.playerAvatar;
-  normalized.playerColor = parsed.playerColor || base.playerColor;
 
   normalized.currentWorldIndex = Math.max(0, Math.min(WORLDS.length - 1, Number(parsed.currentWorldIndex) || 0));
   normalized.currentLevelIndex = Math.max(0, Math.min(9, Number(parsed.currentLevelIndex) || 0));
@@ -260,12 +257,7 @@ function applyTheme(theme) {
   els.themeToggle.checked = theme === "dark";
 }
 
-function applyColorTheme(color) {
-  document.documentElement.style.setProperty("--accent", color);
-}
-
 let selectedAvatar = "🧒";
-let selectedColor = "#00e5ff";
 
 function checkOnboarding() {
   if (!state.setupCompleted) {
@@ -277,7 +269,6 @@ function checkOnboarding() {
     if (els.setupOverlay) {
       els.setupOverlay.hidden = true;
     }
-    applyColorTheme(state.playerColor);
     applyTheme(state.theme);
   }
 }
@@ -295,17 +286,6 @@ function setupCreatorEvents() {
     });
   });
 
-  // Color selection
-  const colButtons = els.setupOverlay.querySelectorAll(".color-btn");
-  colButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      colButtons.forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      selectedColor = btn.getAttribute("data-color");
-      applyColorTheme(selectedColor);
-    });
-  });
-
   if (els.setupSaveBtn) {
     els.setupSaveBtn.addEventListener("click", () => {
       const nameInput = els.setupPlayerName.value.trim();
@@ -316,7 +296,6 @@ function setupCreatorEvents() {
       
       state.playerName = nameInput;
       state.playerAvatar = selectedAvatar;
-      state.playerColor = selectedColor;
       state.setupCompleted = true;
       saveState();
       
@@ -922,7 +901,6 @@ function initializeSettings() {
   els.soundToggle.checked = state.soundEnabled;
   els.musicToggle.textContent = state.musicEnabled ? "♫ Music on" : "♫ Music off";
   els.musicToggle.setAttribute("aria-pressed", String(state.musicEnabled));
-  applyColorTheme(state.playerColor);
   applyTheme(state.theme);
 }
 
