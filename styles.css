@@ -851,7 +851,7 @@ dialog::backdrop {
 
 .color-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.8rem;
 }
 
@@ -866,6 +866,29 @@ dialog::backdrop {
 .color-btn.selected, .color-btn:hover {
   border-color: #ffffff;
   transform: scale(1.08) translateY(-2px);
+}
+
+.setup-validation {
+  color: #ff6b7f;
+  background: rgba(255, 107, 127, 0.1);
+  border: 1px solid rgba(255, 107, 127, 0.2);
+  padding: 0.75rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.setup-card.shake {
+  animation: shake 0.4s ease-in-out;
 }
 
 /* Cosmetic Avatar Frames & Badges */

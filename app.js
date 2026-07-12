@@ -166,10 +166,15 @@ const els = {
   unlockOverlay: document.getElementById("unlockOverlay"),
   celebrationLayer: document.getElementById("celebrationLayer"),
   setupOverlay: document.getElementById("setupOverlay"),
+  setupCard: document.getElementById("setupCard"),
   setupPlayerName: document.getElementById("setupPlayerName"),
   setupAvatarGrid: document.getElementById("setupAvatarGrid"),
+  setupColorGrid: document.getElementById("setupColorGrid"),
+  setupValidationMsg: document.getElementById("setupValidationMsg"),
   setupSaveBtn: document.getElementById("setupSaveBtn"),
   heroAvatarDisplay: document.getElementById("heroAvatarDisplay"),
+  editProfileSettingsBtn: document.getElementById("editProfileSettingsBtn"),
+  resetProfileSettingsBtn: document.getElementById("resetProfileSettingsBtn"),
 };
 
 function createDefaultState() {
@@ -177,6 +182,10 @@ function createDefaultState() {
     setupCompleted: false,
     playerName: "Learner",
     playerAvatar: "🧒",
+    playerColor: "#00e5ff",
+    playerCreatedDate: "",
+    playerPlayTime: 0,
+    playerUniqueId: "",
     difficulty: "easy",
     soundEnabled: true,
     musicEnabled: true,
@@ -191,7 +200,12 @@ function createDefaultState() {
     streak: 0,
     inventory: [],
     achievements: [],
-    leaderboard: [],
+    leaderboard: [
+      { name: "SuperSolver", score: 120, avatar: "🦁" },
+      { name: "MathGamer", score: 95, avatar: "🚀" },
+      { name: "StarCoder", score: 80, avatar: "🦄" },
+      { name: "BrainyBot", score: 65, avatar: "🤖" },
+    ],
     stats: { math: 0, science: 0, geography: 0, logic: 0 },
     currentMode: "math",
     currentWorldIndex: 0,
@@ -212,6 +226,10 @@ function normalizeState(parsed = {}) {
 
   normalized.setupCompleted = parsed && parsed.setupCompleted !== undefined ? Boolean(parsed.setupCompleted) : base.setupCompleted;
   normalized.playerAvatar = parsed.playerAvatar || base.playerAvatar;
+  normalized.playerColor = parsed.playerColor || base.playerColor;
+  normalized.playerCreatedDate = parsed.playerCreatedDate || new Date().toISOString();
+  normalized.playerPlayTime = Number(parsed.playerPlayTime) || 0;
+  normalized.playerUniqueId = parsed.playerUniqueId || "eduplay-player-" + Math.random().toString(36).substr(2, 9) + Date.now();
 
   normalized.currentWorldIndex = Math.max(0, Math.min(WORLDS.length - 1, Number(parsed.currentWorldIndex) || 0));
   normalized.currentLevelIndex = Math.max(0, Math.min(9, Number(parsed.currentLevelIndex) || 0));
@@ -257,13 +275,38 @@ function applyTheme(theme) {
   els.themeToggle.checked = theme === "dark";
 }
 
+function applyColorTheme(color) {
+  document.documentElement.style.setProperty("--accent", color);
+}
+
 let selectedAvatar = "🧒";
+let selectedColor = "#00e5ff";
 
 function checkOnboarding() {
   const mainEl = document.getElementById("main-content");
   const headerEl = document.querySelector(".site-header");
 
   if (!state.setupCompleted) {
+    const title = document.getElementById("setupTitle");
+    const sub = document.getElementById("setupSubtitle");
+    if (title) title.textContent = "Create Your Profile";
+    if (sub) sub.textContent = "Enter your name, avatar, and theme to start your learning quest!";
+    
+    selectedAvatar = "🧒";
+    selectedColor = "#00e5ff";
+    els.setupPlayerName.value = "";
+    
+    // Select default avatar button
+    const avButtons = els.setupOverlay.querySelectorAll(".avatar-btn");
+    avButtons.forEach(b => {
+      b.classList.toggle("selected", b.getAttribute("data-avatar") === selectedAvatar);
+    });
+    // Select default color button
+    const colButtons = els.setupOverlay.querySelectorAll(".color-btn");
+    colButtons.forEach(b => {
+      b.classList.toggle("selected", b.getAttribute("data-color") === selectedColor);
+    });
+
     if (els.setupOverlay) {
       els.setupOverlay.style.display = "grid";
     }
@@ -276,8 +319,41 @@ function checkOnboarding() {
     }
     if (mainEl) mainEl.style.display = "";
     if (headerEl) headerEl.style.display = "";
+    applyColorTheme(state.playerColor);
     applyTheme(state.theme);
   }
+}
+
+function openProfileEditor() {
+  const mainEl = document.getElementById("main-content");
+  const headerEl = document.querySelector(".site-header");
+  
+  const title = document.getElementById("setupTitle");
+  const sub = document.getElementById("setupSubtitle");
+  if (title) title.textContent = "Edit Your Profile";
+  if (sub) sub.textContent = "Change your name, avatar, and theme!";
+  
+  selectedAvatar = state.playerAvatar;
+  selectedColor = state.playerColor;
+  els.setupPlayerName.value = state.playerName;
+  
+  // Select active avatar button
+  const avButtons = els.setupOverlay.querySelectorAll(".avatar-btn");
+  avButtons.forEach(b => {
+    b.classList.toggle("selected", b.getAttribute("data-avatar") === selectedAvatar);
+  });
+  // Select active color button
+  const colButtons = els.setupOverlay.querySelectorAll(".color-btn");
+  colButtons.forEach(b => {
+    b.classList.toggle("selected", b.getAttribute("data-color") === selectedColor);
+  });
+
+  if (els.setupOverlay) {
+    els.setupOverlay.style.display = "grid";
+  }
+  if (mainEl) mainEl.style.display = "none";
+  if (headerEl) headerEl.style.display = "none";
+  setupCreatorEvents();
 }
 
 function setupCreatorEvents() {
@@ -286,23 +362,63 @@ function setupCreatorEvents() {
   // Avatar selection
   const avButtons = els.setupOverlay.querySelectorAll(".avatar-btn");
   avButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      avButtons.forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      selectedAvatar = btn.getAttribute("data-avatar");
+    // Clone and replace to prevent duplicate event listeners
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener("click", () => {
+      avButtons.forEach(b => {
+        const matchingBtn = els.setupOverlay.querySelector(`[data-avatar="${b.getAttribute("data-avatar")}"]`);
+        if (matchingBtn) matchingBtn.classList.remove("selected");
+      });
+      newBtn.classList.add("selected");
+      selectedAvatar = newBtn.getAttribute("data-avatar");
     });
   });
 
+  // Color selection
+  const colButtons = els.setupOverlay.querySelectorAll(".color-btn");
+  colButtons.forEach(btn => {
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener("click", () => {
+      colButtons.forEach(b => {
+        const matchingBtn = els.setupOverlay.querySelector(`[data-color="${b.getAttribute("data-color")}"]`);
+        if (matchingBtn) matchingBtn.classList.remove("selected");
+      });
+      newBtn.classList.add("selected");
+      selectedColor = newBtn.getAttribute("data-color");
+      applyColorTheme(selectedColor);
+    });
+  });
+
+  // Save handler
   if (els.setupSaveBtn) {
+    const newSave = els.setupSaveBtn.cloneNode(true);
+    els.setupSaveBtn.parentNode.replaceChild(newSave, els.setupSaveBtn);
+    els.setupSaveBtn = newSave;
+    
     els.setupSaveBtn.addEventListener("click", () => {
       const nameInput = els.setupPlayerName.value.trim();
       if (!nameInput) {
-        alert("Please enter a name first!");
+        if (els.setupCard) {
+          els.setupCard.classList.remove("shake");
+          void els.setupCard.offsetWidth; // Trigger reflow
+          els.setupCard.classList.add("shake");
+        }
+        if (els.setupValidationMsg) {
+          els.setupValidationMsg.textContent = "🧒 Whoops! Please enter a Code Name to start.";
+          els.setupValidationMsg.style.display = "block";
+        }
         return;
+      }
+      
+      if (els.setupValidationMsg) {
+        els.setupValidationMsg.style.display = "none";
       }
       
       state.playerName = nameInput;
       state.playerAvatar = selectedAvatar;
+      state.playerColor = selectedColor;
       state.setupCompleted = true;
       saveState();
       
@@ -313,6 +429,7 @@ function setupCreatorEvents() {
       if (mainEl) mainEl.style.display = "";
       if (headerEl) headerEl.style.display = "";
       
+      applyColorTheme(state.playerColor);
       initializeSettings();
       renderProgressPanel();
     });
@@ -473,7 +590,8 @@ function renderLeaderboard() {
   sorted.forEach((entry, index) => {
     const li = document.createElement("li");
     li.className = "leaderboard-item";
-    li.innerHTML = `<span>#${index + 1} ${entry.name}</span><strong>${entry.score}</strong>`;
+    const avatar = entry.avatar || "🧒";
+    li.innerHTML = `<span>#${index + 1} <span style="margin: 0 0.3rem; font-size: 1.25rem;">${avatar}</span> ${entry.name}</span><strong>${entry.score}</strong>`;
     els.leaderboardList.appendChild(li);
   });
 }
@@ -702,8 +820,9 @@ function endGame() {
   const rank = state.leaderboard.find((entry) => entry.name === state.playerName);
   if (rank) {
     rank.score = Math.max(rank.score, score);
+    rank.avatar = state.playerAvatar;
   } else {
-    state.leaderboard.push({ name: state.playerName, score });
+    state.leaderboard.push({ name: state.playerName, score, avatar: state.playerAvatar });
   }
   state.leaderboard.sort((a, b) => b.score - a.score);
   state.currentLevelIndex = 0;
@@ -974,6 +1093,30 @@ function bindEvents() {
     els.settingsForm.addEventListener("input", updateSettings);
   }
 
+  if (els.editProfileSettingsBtn) {
+    els.editProfileSettingsBtn.addEventListener("click", () => {
+      openProfileEditor();
+    });
+  }
+
+  if (els.resetProfileSettingsBtn) {
+    els.resetProfileSettingsBtn.addEventListener("click", () => {
+      const confirmed = confirm("🧒 Are you sure you want to reset all your progress, coins, and profile? This cannot be undone!");
+      if (confirmed) {
+        localStorage.removeItem(STORAGE_KEY);
+        const base = createDefaultState();
+        Object.keys(base).forEach(key => {
+          state[key] = base[key];
+        });
+        saveState();
+        checkOnboarding();
+        initializeSettings();
+        renderProgressPanel();
+        setStatus("Your progress and profile have been reset.", "default");
+      }
+    });
+  }
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       els.helpDialog.close();
@@ -996,6 +1139,17 @@ function initialize() {
   renderProgressPanel();
   bindEvents();
   setStatus("The adventure is ready. Choose a world and begin.", "default");
+
+  // Track total play time in seconds
+  window.setInterval(() => {
+    if (state.setupCompleted) {
+      state.playerPlayTime = (state.playerPlayTime || 0) + 1;
+      // Save progress automatically every 30 seconds
+      if (state.playerPlayTime % 30 === 0) {
+        saveState();
+      }
+    }
+  }, 1000);
 }
 
 initialize();

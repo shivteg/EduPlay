@@ -22,9 +22,9 @@
 
     <!-- Onboarding Setup Character Profile Creator -->
     <div id="setupOverlay" class="setup-overlay" hidden>
-      <div class="setup-card" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
-        <h2 id="setupTitle">Edit Avatar</h2>
-        <p>Enter your name and choose an avatar to start your learning quest!</p>
+      <div class="setup-card" id="setupCard" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+        <h2 id="setupTitle">Create Your Profile</h2>
+        <p id="setupSubtitle">Enter your name, avatar, and theme to start your learning quest!</p>
         <div class="setup-grid">
           <label class="setup-field">
             <span>Your Code Name</span>
@@ -40,7 +40,18 @@
               <button type="button" class="avatar-btn" data-avatar="🤖">🤖</button>
             </div>
           </div>
+          <div class="setup-field">
+            <span>Favorite Color Theme</span>
+            <div class="color-grid" id="setupColorGrid">
+              <button type="button" class="color-btn selected" style="background-color: #00e5ff;" data-color="#00e5ff" aria-label="Teal Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #ff4785;" data-color="#ff4785" aria-label="Pink Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #ffc82c;" data-color="#ffc82c" aria-label="Yellow Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #4ade80;" data-color="#4ade80" aria-label="Green Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #a855f7;" data-color="#a855f7" aria-label="Purple Theme"></button>
+            </div>
+          </div>
         </div>
+        <div id="setupValidationMsg" class="setup-validation" style="display: none;"></div>
         <button type="button" class="button primary" id="setupSaveBtn">Start Game</button>
       </div>
     </div>
@@ -291,6 +302,10 @@
               <input id="soundToggle" name="sound" type="checkbox" checked />
               <span>Enable sound effects</span>
             </label>
+            <div style="margin-top: 1.25rem; display: flex; gap: 0.8rem; flex-wrap: wrap;">
+              <button class="button secondary" id="editProfileSettingsBtn" type="button">Edit Avatar & Color</button>
+              <button class="button secondary danger" id="resetProfileSettingsBtn" type="button">Reset All Progress</button>
+            </div>
           </form>
         </article>
 
