@@ -260,15 +260,22 @@ function applyTheme(theme) {
 let selectedAvatar = "🧒";
 
 function checkOnboarding() {
+  const mainEl = document.getElementById("main-content");
+  const headerEl = document.querySelector(".site-header");
+
   if (!state.setupCompleted) {
     if (els.setupOverlay) {
       els.setupOverlay.style.display = "grid";
     }
+    if (mainEl) mainEl.style.display = "none";
+    if (headerEl) headerEl.style.display = "none";
     setupCreatorEvents();
   } else {
     if (els.setupOverlay) {
       els.setupOverlay.style.display = "none";
     }
+    if (mainEl) mainEl.style.display = "";
+    if (headerEl) headerEl.style.display = "";
     applyTheme(state.theme);
   }
 }
@@ -300,6 +307,12 @@ function setupCreatorEvents() {
       saveState();
       
       els.setupOverlay.style.display = "none";
+      
+      const mainEl = document.getElementById("main-content");
+      const headerEl = document.querySelector(".site-header");
+      if (mainEl) mainEl.style.display = "";
+      if (headerEl) headerEl.style.display = "";
+      
       initializeSettings();
       renderProgressPanel();
     });
