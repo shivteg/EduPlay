@@ -210,7 +210,7 @@ function normalizeState(parsed = {}) {
     worldProgress: { ...base.worldProgress, ...(parsed.worldProgress || {}) },
   };
 
-  normalized.setupCompleted = parsed.hasOwnProperty('setupCompleted') ? Boolean(parsed.setupCompleted) : base.setupCompleted;
+  normalized.setupCompleted = parsed && parsed.setupCompleted !== undefined ? Boolean(parsed.setupCompleted) : base.setupCompleted;
   normalized.playerAvatar = parsed.playerAvatar || base.playerAvatar;
 
   normalized.currentWorldIndex = Math.max(0, Math.min(WORLDS.length - 1, Number(parsed.currentWorldIndex) || 0));
