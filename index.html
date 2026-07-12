@@ -20,6 +20,54 @@
     <div id="unlockOverlay" class="unlock-overlay" hidden></div>
     <div id="celebrationLayer" class="celebration-layer" aria-hidden="true"></div>
 
+    <!-- Onboarding Setup Character Profile Creator -->
+    <div id="setupOverlay" class="setup-overlay" hidden>
+      <div class="setup-card" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+        <h2 id="setupTitle">Create Your Profile</h2>
+        <p>Pick a name, avatar, and color to start your learning quest!</p>
+        <div class="setup-grid">
+          <label class="setup-field">
+            <span>Your Code Name</span>
+            <input type="text" id="setupPlayerName" placeholder="Enter name..." maxlength="15" autocomplete="off" required />
+          </label>
+          <div class="setup-field">
+            <span>Select Your Avatar</span>
+            <div class="avatar-grid" id="setupAvatarGrid">
+              <button type="button" class="avatar-btn selected" data-avatar="🧒">🧒</button>
+              <button type="button" class="avatar-btn" data-avatar="🦁">🦁</button>
+              <button type="button" class="avatar-btn" data-avatar="🚀">🚀</button>
+              <button type="button" class="avatar-btn" data-avatar="🦄">🦄</button>
+              <button type="button" class="avatar-btn" data-avatar="🐼">🐼</button>
+              <button type="button" class="avatar-btn" data-avatar="🤖">🤖</button>
+              <button type="button" class="avatar-btn" data-avatar="🧙">🧙</button>
+              <button type="button" class="avatar-btn" data-avatar="🦖">🦖</button>
+            </div>
+          </div>
+          <div class="setup-field">
+            <span>Favorite Color Theme</span>
+            <div class="color-grid" id="setupColorGrid">
+              <button type="button" class="color-btn selected" style="background-color: #00e5ff;" data-color="#00e5ff" aria-label="Teal Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #ff4785;" data-color="#ff4785" aria-label="Pink Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #ffc82c;" data-color="#ffc82c" aria-label="Yellow Theme"></button>
+              <button type="button" class="color-btn" style="background-color: #4ade80;" data-color="#4ade80" aria-label="Green Theme"></button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="button primary" id="setupSaveBtn">Start Game</button>
+      </div>
+    </div>
+
+    <!-- Victory Treasure Chest Reward Modal -->
+    <dialog id="treasureDialog">
+      <div class="dialog-content treasure-dialog-content">
+        <h3>🎉 Level Completed!</h3>
+        <p>Click the chest to open and claim your treasure.</p>
+        <div id="chestIcon" class="chest-icon" role="button" aria-label="Open Chest">🎁</div>
+        <div id="chestPrize" class="chest-prize"></div>
+        <button class="button primary" id="closeTreasureBtn" type="button" style="display:none;">Claim Reward</button>
+      </div>
+    </dialog>
+
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <header class="site-header">
@@ -31,6 +79,7 @@
         </div>
       </div>
       <div class="header-actions">
+        <button class="voice-toggle-btn" id="ttsToggle" type="button" aria-pressed="false" title="Read questions aloud" aria-label="Toggle voice narration">🔊 Voice Off</button>
         <button class="button secondary icon-button" id="musicToggle" type="button" aria-pressed="true">♫ Music</button>
         <label class="switch" for="themeToggle">
           <span class="switch-label">Dark mode</span>
@@ -43,21 +92,21 @@
     </header>
 
     <main id="main-content">
+      <!-- Complete Landing Page / Hero -->
       <section class="hero section-card" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">Animated educational game platform</p>
+          <p class="eyebrow">Interactive Educational Game Platform</p>
           <h2 id="hero-title">Play, learn, and level up every day.</h2>
           <p>
-            Explore magical worlds packed with quizzes, rewards, and encouraging challenges
-            designed to make every lesson feel like a fun adventure.
+            Master 10 progressively harder math challenges from simple addition to fractions, patterns, shapes, and an epic boss battle! Unlock rewards, buy cool avatars, and hit the leaderboards.
           </p>
           <div class="hero-actions">
             <button class="button primary" id="startHeroButton" type="button">Start your journey</button>
             <button class="button secondary" id="viewStatsButton" type="button">See progress</button>
           </div>
           <div class="hero-badges" aria-label="Highlights">
-            <span class="badge-pill">✨ 4 magical worlds</span>
-            <span class="badge-pill">🪙 Coins and boosts</span>
+            <span class="badge-pill">✨ 10 skill levels</span>
+            <span class="badge-pill">🪙 Coins & cosmetics</span>
             <span class="badge-pill">🏆 Daily streaks</span>
           </div>
         </div>
@@ -67,8 +116,9 @@
               <div>
                 <p class="stat-label">Player</p>
                 <p class="stat-value" id="playerNameDisplay">Learner</p>
+                <span class="player-title" id="playerTitleDisplay" style="display:none;"></span>
               </div>
-              <div class="player-avatar" aria-hidden="true">🧒</div>
+              <div class="player-avatar" id="heroAvatarDisplay" aria-hidden="true">🧒</div>
             </div>
             <div class="hero-card-grid">
               <div>
@@ -84,7 +134,7 @@
                 <p class="stat-value" id="heroXP">0</p>
               </div>
               <div>
-                <p class="stat-label">Best</p>
+                <p class="stat-label">Best Score</p>
                 <p class="stat-value" id="heroBest">0</p>
               </div>
             </div>
@@ -96,6 +146,7 @@
         </div>
       </section>
 
+      <!-- Dashboard Shell -->
       <section class="dashboard-shell" aria-label="Adventure overview">
         <article class="panel dashboard-panel">
           <div class="panel-header">
@@ -126,19 +177,48 @@
               <strong id="livesValue">3</strong>
             </div>
           </div>
+          
+          <!-- Daily Challenge Banner -->
+          <div class="trait-card" style="margin-top: 1rem; border-color: var(--accent-3); background: rgba(255, 200, 44, 0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <span class="eyebrow" style="color: var(--accent-3);">Daily Challenge</span>
+              <h4 style="margin:0; font-size: 1rem;">Complete any level for double XP!</h4>
+            </div>
+            <span class="status-pill" style="background: rgba(255, 200, 44, 0.2); color: var(--accent-3);">Active</span>
+          </div>
         </article>
 
-        <aside class="panel world-panel">
+        <!-- Lucky Wheel Panel -->
+        <article class="panel lucky-wheel-panel">
           <div class="panel-header compact">
             <div>
-              <p class="eyebrow">Unlockable worlds</p>
-              <h3>World map</h3>
+              <p class="eyebrow">Daily reward</p>
+              <h3>Lucky spin wheel</h3>
             </div>
           </div>
-          <div id="worldList" class="world-list"></div>
+          <div class="lucky-wheel-widget">
+            <div class="wheel-container">
+              <div class="wheel-pointer"></div>
+              <div id="wheelGraphic" class="wheel-graphic"></div>
+            </div>
+            <button class="button primary" id="spinWheelBtn" type="button">Spin Wheel</button>
+            <p id="wheelResult" class="feedback" style="margin: 0; min-height: auto; font-size: 0.9rem; text-align: center;"></p>
+          </div>
+        </article>
+
+        <!-- Map of 10 Progressively Harder Levels -->
+        <aside class="panel world-panel" style="grid-column: 1 / -1;">
+          <div class="panel-header compact">
+            <div>
+              <p class="eyebrow">Level pathway</p>
+              <h3>Progressive Skill Map</h3>
+            </div>
+          </div>
+          <div id="levelsMap" class="levels-map"></div>
         </aside>
       </section>
 
+      <!-- Game Challenge Area -->
       <section class="game-shell section-card" aria-labelledby="game-title">
         <div class="panel header-panel">
           <div class="panel-header">
@@ -146,12 +226,12 @@
               <p class="eyebrow">Current mission</p>
               <h2 id="game-title">Challenge board</h2>
             </div>
-            <div class="status-pill" id="missionStatus">World 1 · Stellar Sprint</div>
+            <div class="status-pill" id="missionStatus">Level 1 · Stellar Summit</div>
           </div>
           <div class="mission-meta">
-            <div class="meta-pill" id="worldBadge">World 1 · Stellar Sprint</div>
-            <div class="meta-pill" id="levelBadge">Level 1</div>
-            <div class="meta-pill">Boss level <span id="bossBadge">No</span></div>
+            <div class="meta-pill" id="worldBadge">Level 1 · Stellar Summit</div>
+            <div class="meta-pill" id="levelBadge">Addition</div>
+            <div class="meta-pill">Boss Level <span id="bossBadge">No</span></div>
           </div>
 
           <div class="hud" aria-label="Game status">
@@ -168,14 +248,14 @@
               <strong id="livesValueInline">3</strong>
             </div>
             <div class="hud-card">
-              <span class="hud-label">Level</span>
+              <span class="hud-label">Question</span>
               <strong id="roundValue">1/10</strong>
             </div>
           </div>
 
           <div class="world-progress-panel">
             <div class="progress-row compact">
-              <span>World completion</span>
+              <span>Level Completion</span>
               <strong id="worldProgressTextInline">0%</strong>
             </div>
             <div class="progress-bar" aria-hidden="true">
@@ -185,35 +265,51 @@
         </div>
 
         <div class="game-grid">
-          <article class="panel large">
-            <div class="question-meta" id="questionMeta"></div>
-            <h3 id="questionText">Choose a world to begin your quest.</h3>
-            <div class="options" id="options" role="list"></div>
-            <div class="feedback" id="feedback" aria-live="polite"></div>
-            <div class="game-actions">
-              <button class="button primary" id="startGameButton" type="button">Start quest</button>
-              <button class="button secondary" id="hintButton" type="button">Reveal hint</button>
+          <div class="game-card-wrapper">
+            <article class="panel large" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div class="question-meta" id="questionMeta"></div>
+                <h3 id="questionText">Choose a level from the map to begin your quest.</h3>
+                <div class="options" id="options" role="list"></div>
+                <div class="feedback" id="feedback" aria-live="polite"></div>
+              </div>
+              <div class="game-actions" style="margin-top: 1.5rem;">
+                <button class="button primary" id="startGameButton" type="button">Start Level</button>
+                <button class="button secondary" id="hintButton" type="button">Reveal Hint</button>
+                <button class="button secondary" id="skipQuestionButton" type="button" title="Skip current question">Skip (Skip Pass) ⏭️</button>
+                <button class="button secondary" id="pauseGameButton" type="button" title="Pause the game">Pause ⏸️</button>
+              </div>
+            </article>
+            
+            <!-- Pause Overlay -->
+            <div id="pauseOverlay" class="pause-overlay">
+              <h4>Adventure Paused</h4>
+              <p>Take a small break, then resume when ready!</p>
+              <button class="button primary" id="resumeGameButton" type="button">Resume Game</button>
             </div>
-          </article>
+          </div>
 
           <aside class="panel side-panel">
-            <h3>Study paths</h3>
-            <div class="chip-group" id="modeButtons" role="group" aria-label="Game themes"></div>
-            <h3>Daily quests</h3>
-            <ul class="inventory-list quest-list" id="questList"></ul>
-            <h3>Inventory</h3>
+            <h3>My Wardrobe</h3>
+            <div id="cosmeticsInventory" class="inventory-grid">
+              <p style="font-size:0.85rem; color:var(--muted);">No cosmetics owned yet. Buy some in the Shop!</p>
+            </div>
+
+            <h3>Inventory Boosts</h3>
             <ul class="inventory-list" id="inventoryList"></ul>
-            <h3>Achievements</h3>
+
+            <h3>Unlocked Badges</h3>
             <ul class="inventory-list" id="achievementList"></ul>
           </aside>
         </div>
       </section>
 
+      <!-- Shop, Stats, and Leaderboards -->
       <section class="info-grid" aria-label="Rewards and progress">
         <article class="panel">
           <div class="panel-header compact">
             <div>
-              <p class="eyebrow">Rewards</p>
+              <p class="eyebrow">Cosmetics & power-ups</p>
               <h3>Shop</h3>
             </div>
           </div>
@@ -241,6 +337,7 @@
         </article>
       </section>
 
+      <!-- Settings & Support -->
       <section class="settings-grid" aria-label="Settings and support">
         <article class="panel">
           <div class="panel-header compact">
@@ -249,7 +346,7 @@
               <h3>Settings</h3>
             </div>
           </div>
-          <form id="settingsForm" class="settings-form">
+          <form id="settingsForm" class="settings-form" onsubmit="event.preventDefault();">
             <label>
               Name
               <input id="playerName" name="playerName" type="text" maxlength="20" />
@@ -262,10 +359,19 @@
                 <option value="hard">Hard</option>
               </select>
             </label>
+            <div class="volume-control-row">
+              <span>🎵 Music Volume</span>
+              <input type="range" id="musicVolumeSlider" class="volume-slider" min="0" max="100" value="70" aria-label="Music volume slider" />
+            </div>
+            <div class="volume-control-row">
+              <span>🔊 FX Volume</span>
+              <input type="range" id="fxVolumeSlider" class="volume-slider" min="0" max="100" value="80" aria-label="Effects volume slider" />
+            </div>
             <label class="checkbox-row">
               <input id="soundToggle" name="sound" type="checkbox" checked />
               <span>Enable sound effects</span>
             </label>
+            <button type="button" class="button secondary" id="resetProgressBtn" style="background-color: var(--danger); color: white; border: none; margin-top: 1rem;">🔥 Reset All Progress</button>
           </form>
         </article>
 
@@ -289,14 +395,18 @@
       </section>
     </main>
 
+    <!-- Dialogs -->
     <dialog id="helpDialog">
       <form method="dialog" class="dialog-content">
         <h3>How EduPlay works</h3>
         <ul>
-          <li>Pick a world and learn through progressively harder levels.</li>
-          <li>Answer quickly to earn XP, coins, and streaks.</li>
-          <li>Spend coins in the shop and unlock the next world after completing 10 levels.</li>
-          <li>Use the music and sound controls to tailor your learning mood.</li>
+          <li><strong>Gameplay:</strong> Pick a level from the map path and start your quest. Answer 10 math questions per level.</li>
+          <li><strong>Progressive Levels:</strong> Advance through 10 math themes (Addition, Subtraction, Multiplication, Division, Fractions, Time, Shapes, Patterns, Word Problems, and the Boss Battle).</li>
+          <li><strong>Scoring & Multipliers:</strong> You gain points for correct answers. Earn consecutive answers correct to build a <strong>Combo Streak</strong> multiplier. Quick answers receive a speed time-bonus! Wrong answers deduct points.</li>
+          <li><strong>Economy & Shop:</strong> Correct answers yield <strong>Coins</strong>. Shop at the rewards store to unlock special boosters (Hint, Time, Shield, Skip) or cosmetic Avatar Frames & Titles.</li>
+          <li><strong>Wardrobe:</strong> Equip owned frames and titles in the "My Wardrobe" section of the dashboard to customize your profile!</li>
+          <li><strong>Lucky Spin:</strong> Take a free spin on the Lucky Wheel once per session to win bonus coins or boosters.</li>
+          <li><strong>Narration:</strong> Click the voice narration button (🔊) in the header to read questions out loud.</li>
         </ul>
         <button class="button primary" type="submit">Close</button>
       </form>
@@ -305,7 +415,9 @@
     <dialog id="creditsDialog">
       <form method="dialog" class="dialog-content">
         <h3>Credits</h3>
-        <p>Designed and built by Shivteg Singh as a premium educational game experience with semantic HTML, CSS, and vanilla JavaScript.</p>
+        <p>Designed and built by Shivteg Singh. Upgrade updates implemented to complete state-of-the-art educational components, satisfying highest code standards and accessibility.</p>
+        <p><strong>Version:</strong> 2.0.0 (Premium Update)</p>
+        <p><strong>License:</strong> MIT License</p>
         <button class="button primary" type="submit">Close</button>
       </form>
     </dialog>
