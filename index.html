@@ -67,6 +67,12 @@
         </div>
       </div>
       <div class="header-actions">
+        <select id="roleSelector" class="role-dropdown" aria-label="Select User Role">
+          <option value="super_admin">👑 Super Admin (Shivteg)</option>
+          <option value="school_admin">🏛️ School Admin</option>
+          <option value="teacher">🎓 Teacher</option>
+          <option value="student" selected>🎒 Student</option>
+        </select>
         <button class="button secondary icon-button" id="musicToggle" type="button" aria-pressed="true">♫ Music</button>
         <label class="switch" for="themeToggle">
           <span class="switch-label">Dark mode</span>
@@ -79,6 +85,77 @@
     </header>
 
     <main id="main-content">
+      <!-- Student Access Banner -->
+      <div id="studentNotice" class="student-banner" style="display: none;">
+        <span>🎒 <strong>Student Account:</strong> Full access to play games, complete quests, and level up! Management dashboard disabled.</span>
+      </div>
+
+      <!-- Super Admin Shivteg Control Center -->
+      <section id="superAdminPanel" class="section-card admin-card" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Supreme Control</p>
+            <h2>👑 Shivteg Super Admin Control Center</h2>
+          </div>
+          <button class="button danger btn-sm" id="saResetBtn">Reset Game System</button>
+        </div>
+        <p>Full authority over all game worlds, coins, XP boosts, and user rosters.</p>
+        <div class="hero-actions" style="margin-top: 1rem;">
+          <button class="button primary" id="saUnlockAllBtn">✨ Unlock All Worlds</button>
+          <button class="button secondary" id="saGrantCoinsBtn">🪙 Grant +500 Coins & XP</button>
+        </div>
+        <div class="admin-roster-grid" style="margin-top: 1.5rem;">
+          <form id="saAddUserForm" class="setup-grid">
+            <input type="text" id="saUserName" placeholder="Full Name" required />
+            <input type="email" id="saUserEmail" placeholder="Email" required />
+            <select id="saUserRole">
+              <option value="school_admin">School Admin</option>
+              <option value="teacher">Teacher</option>
+              <option value="student">Student</option>
+            </select>
+            <button type="submit" class="button primary">Add System User</button>
+          </form>
+          <ul id="saUserList" class="roster-list" style="margin-top: 1rem;"></ul>
+        </div>
+      </section>
+
+      <!-- School Admin Console -->
+      <section id="schoolAdminPanel" class="section-card admin-card" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">School Management</p>
+            <h2>🏛️ School Admin Console</h2>
+          </div>
+        </div>
+        <p>Manage school staff, teacher assignments, and student rosters.</p>
+        <form id="schoolAdminAddForm" class="setup-grid" style="margin-top: 1rem;">
+          <input type="text" id="schoolStaffName" placeholder="Staff Name" required />
+          <input type="email" id="schoolStaffEmail" placeholder="Staff Email" required />
+          <select id="schoolStaffRole">
+            <option value="teacher">Teacher</option>
+            <option value="student">Student</option>
+          </select>
+          <button type="submit" class="button primary">Enroll Staff/Student</button>
+        </form>
+        <ul id="schoolStaffList" class="roster-list" style="margin-top: 1rem;"></ul>
+      </section>
+
+      <!-- Teacher Console -->
+      <section id="teacherPanel" class="section-card admin-card" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Teacher Console</p>
+            <h2>🎓 Teacher Classroom Roster</h2>
+          </div>
+        </div>
+        <p>Teachers have full access to add students and assign educational game quests.</p>
+        <form id="teacherAddStudentForm" class="setup-grid" style="margin-top: 1rem;">
+          <input type="text" id="tStudentName" placeholder="Student Name" required />
+          <input type="email" id="tStudentEmail" placeholder="Student Email" required />
+          <button type="submit" class="button primary">Add Student to Roster</button>
+        </form>
+        <ul id="tStudentList" class="roster-list" style="margin-top: 1rem;"></ul>
+      </section>
       <section class="hero section-card" aria-labelledby="hero-title">
         <div class="hero-copy">
           <p class="eyebrow">Animated educational game platform</p>

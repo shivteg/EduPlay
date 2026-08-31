@@ -175,7 +175,72 @@ const els = {
   heroAvatarDisplay: document.getElementById("heroAvatarDisplay"),
   editProfileSettingsBtn: document.getElementById("editProfileSettingsBtn"),
   resetProfileSettingsBtn: document.getElementById("resetProfileSettingsBtn"),
+  roleSelector: document.getElementById("roleSelector"),
+  studentNotice: document.getElementById("studentNotice"),
+  superAdminPanel: document.getElementById("superAdminPanel"),
+  schoolAdminPanel: document.getElementById("schoolAdminPanel"),
+  teacherPanel: document.getElementById("teacherPanel"),
+  saUnlockAllBtn: document.getElementById("saUnlockAllBtn"),
+  saGrantCoinsBtn: document.getElementById("saGrantCoinsBtn"),
+  saResetBtn: document.getElementById("saResetBtn"),
+  saAddUserForm: document.getElementById("saAddUserForm"),
+  saUserList: document.getElementById("saUserList"),
+  schoolAdminAddForm: document.getElementById("schoolAdminAddForm"),
+  schoolStaffList: document.getElementById("schoolStaffList"),
+  teacherAddStudentForm: document.getElementById("teacherAddStudentForm"),
+  tStudentList: document.getElementById("tStudentList"),
 };
+
+function applyEduPlayRolePermissions() {
+  const role = state.userRole || "student";
+  if (els.roleSelector) els.roleSelector.value = role;
+
+  if (els.studentNotice) els.studentNotice.style.display = role === "student" ? "block" : "none";
+  if (els.superAdminPanel) els.superAdminPanel.style.display = role === "super_admin" ? "block" : "none";
+  if (els.schoolAdminPanel) els.schoolAdminPanel.style.display = role === "school_admin" ? "block" : "none";
+  if (els.teacherPanel) els.teacherPanel.style.display = role === "teacher" ? "block" : "none";
+
+  renderEduPlayRosters();
+}
+
+function renderEduPlayRosters() {
+  const roster = state.systemRoster || [];
+  
+  if (els.saUserList) {
+    els.saUserList.innerHTML = roster.map(u => `
+      <li class="roster-item">
+        <div>
+          <strong>${u.name}</strong> <small>(${u.email})</small>
+        </div>
+        <span class="role-badge role-${u.role}">${u.role.toUpperCase()}</span>
+      </li>
+    `).join("");
+  }
+
+  if (els.schoolStaffList) {
+    const staff = roster.filter(u => u.role === "teacher" || u.role === "student");
+    els.schoolStaffList.innerHTML = staff.map(u => `
+      <li class="roster-item">
+        <div>
+          <strong>${u.name}</strong> <small>(${u.email})</small>
+        </div>
+        <span class="role-badge role-${u.role}">${u.role.toUpperCase()}</span>
+      </li>
+    `).join("");
+  }
+
+  if (els.tStudentList) {
+    const students = roster.filter(u => u.role === "student");
+    els.tStudentList.innerHTML = students.map(u => `
+      <li class="roster-item">
+        <div>
+          <strong>${u.name}</strong> <small>(${u.email})</small>
+        </div>
+        <span class="role-badge role-student">STUDENT</span>
+      </li>
+    `).join("");
+  }
+}
 
 function createDefaultState() {
   return {
@@ -186,6 +251,7 @@ function createDefaultState() {
     playerCreatedDate: "",
     playerPlayTime: 0,
     playerUniqueId: "",
+    userRole: "student",
     difficulty: "easy",
     soundEnabled: true,
     musicEnabled: true,
@@ -212,6 +278,12 @@ function createDefaultState() {
     currentLevelIndex: 0,
     worldProgress: { 0: 0, 1: 0, 2: 0, 3: 0 },
     unlockedWorlds: [true, false, false, false],
+    systemRoster: [
+      { name: "Shivteg", email: "official@shivtge.com", role: "super_admin" },
+      { name: "Dr. Sarah", email: "admin@school.edu", role: "school_admin" },
+      { name: "Prof. Oak", email: "teacher@school.edu", role: "teacher" },
+      { name: "Alex Johnson", email: "student@school.edu", role: "student" },
+    ]
   };
 }
 
@@ -1117,6 +1189,86 @@ function bindEvents() {
     });
   }
 
+  if (els.roleSelector) {
+    els.roleSelector.addEventListener("change", (e) => {
+      state.userRole = e.target.value;
+      saveState();
+      applyEduPlayRolePermissions();
+    });
+  }
+
+  if (els.saUnlockAllBtn) {
+    els.saUnlockAllBtn.addEventListener("click", () => {
+      state.unlockedWorlds = [true, true, true, true];
+      saveState();
+      renderWorlds();
+      setStatus("✨ Super Admin unlocked all game worlds!", "success");
+    });
+  }
+
+  if (els.saGrantCoinsBtn) {
+    els.saGrantCoinsBtn.addEventListener("click", () => {
+      state.coins += 500;
+      state.xp += 500;
+      saveState();
+      renderProgressPanel();
+      setStatus("🪙 Super Admin granted +500 Coins & XP!", "success");
+    });
+  }
+
+  if (els.saResetBtn) {
+    els.saResetBtn.addEventListener("click", () => {
+      if (confirm("👑 Super Admin: Reset game system and restore default roster?")) {
+        const base = createDefaultState();
+        Object.keys(base).forEach(k => state[k] = base[k]);
+        saveState();
+        initialize();
+        setStatus("System data reset to default.", "warning");
+      }
+    });
+  }
+
+  if (els.saAddUserForm) {
+    els.saAddUserForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("saUserName").value.trim();
+      const email = document.getElementById("saUserEmail").value.trim();
+      const role = document.getElementById("saUserRole").value;
+      state.systemRoster.push({ name, email, role });
+      saveState();
+      applyEduPlayRolePermissions();
+      els.saAddUserForm.reset();
+      setStatus(`Added system user ${name} (${role})`, "success");
+    });
+  }
+
+  if (els.schoolAdminAddForm) {
+    els.schoolAdminAddForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("schoolStaffName").value.trim();
+      const email = document.getElementById("schoolStaffEmail").value.trim();
+      const role = document.getElementById("schoolStaffRole").value;
+      state.systemRoster.push({ name, email, role });
+      saveState();
+      applyEduPlayRolePermissions();
+      els.schoolAdminAddForm.reset();
+      setStatus(`Enrolled ${name} as ${role}`, "success");
+    });
+  }
+
+  if (els.teacherAddStudentForm) {
+    els.teacherAddStudentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("tStudentName").value.trim();
+      const email = document.getElementById("tStudentEmail").value.trim();
+      state.systemRoster.push({ name, email, role: "student" });
+      saveState();
+      applyEduPlayRolePermissions();
+      els.teacherAddStudentForm.reset();
+      setStatus(`Enrolled student ${name} to roster`, "success");
+    });
+  }
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       els.helpDialog.close();
@@ -1137,6 +1289,7 @@ function initialize() {
   renderStats();
   renderLeaderboard();
   renderProgressPanel();
+  applyEduPlayRolePermissions();
   bindEvents();
   setStatus("The adventure is ready. Choose a world and begin.", "default");
 
@@ -1144,7 +1297,6 @@ function initialize() {
   window.setInterval(() => {
     if (state.setupCompleted) {
       state.playerPlayTime = (state.playerPlayTime || 0) + 1;
-      // Save progress automatically every 30 seconds
       if (state.playerPlayTime % 30 === 0) {
         saveState();
       }
