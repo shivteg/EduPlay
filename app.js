@@ -279,7 +279,7 @@ function createDefaultState() {
     worldProgress: { 0: 0, 1: 0, 2: 0, 3: 0 },
     unlockedWorlds: [true, false, false, false],
     systemRoster: [
-      { name: "Shivteg", email: "official@shivtge.com", role: "super_admin" },
+      { name: "Shivteg", email: "official@shivteg.com", role: "super_admin" },
       { name: "Dr. Sarah", email: "admin@school.edu", role: "school_admin" },
       { name: "Prof. Oak", email: "teacher@school.edu", role: "teacher" },
       { name: "Alex Johnson", email: "student@school.edu", role: "student" },
